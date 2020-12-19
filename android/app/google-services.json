@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1007325055644",
+    "project_id": "fireworks-fd4a4",
+    "storage_bucket": "fireworks-fd4a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007325055644:android:46dc8a717a4f3b84edbb59",
+        "android_client_info": {
+          "package_name": "com.sgencer.social_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007325055644-vg64seq2ois9q0b401gh3q89q8js58d5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXZWXRe6fApzBw146wqaJaVzFwezA4Dpc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007325055644-vg64seq2ois9q0b401gh3q89q8js58d5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
