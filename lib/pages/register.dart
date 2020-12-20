@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_app/models/Kullanici.dart';
 import 'package:social_app/services/authentication.dart';
+import 'package:social_app/services/firestoreservisi.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -142,8 +144,14 @@ class _RegisterState extends State<Register> {
       });
 
       try{
-        await _yetkilendirmeServisi.mailIleKayit(email, sifre);
-        Navigator.pop(context);
+        Kullanici kullanici = await _yetkilendirmeServisi.mailIleKayit(email, sifre);
+        if(kullanici != null){
+          Kullanici firestoreKullanici = await FirestoreServisi().kullaniciGetir(kullanici.id);
+          if(firestoreKullanici == null){
+            await FirestoreServisi().kullaniciOlustur(id: kullanici.id, email:kullanici.email, kullaniciAdi: kullaniciAdi);
+          }
+          Navigator.pop(context);
+        }
       }catch(error){
         setState(() {
           yukleniyor = false;

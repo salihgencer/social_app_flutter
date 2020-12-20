@@ -34,6 +34,7 @@ class YetkilendirmeServisi {
     OAuthCredential googleAccountDocument = GoogleAuthProvider.credential(idToken: googleAuthentication.idToken, accessToken: googleAuthentication.accessToken);
     // Giriş yetki kartı alındıktan sorna bunu firebase tarafına iletmemiz gerekiyor.
     UserCredential firebaseCredentials = await _firebaseAuth.signInWithCredential(googleAccountDocument);
+    print(firebaseCredentials.user);
     return _kullaniciOlustur(firebaseCredentials.user);
 
   }

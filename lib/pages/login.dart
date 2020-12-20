@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_app/models/Kullanici.dart';
 import 'package:social_app/pages/register.dart';
 import 'package:social_app/services/authentication.dart';
+import 'package:social_app/services/firestoreservisi.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -185,9 +187,15 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      await _yetkilendirmeServisi.googleIleGiris();
-      //Navigator.of(context).pop();
+      Kullanici kullanici = await _yetkilendirmeServisi.googleIleGiris();
+      if(kullanici != null){
+        Kullanici firestoreKullanici = await FirestoreServisi().kullaniciGetir(kullanici.id);
+        if(firestoreKullanici == null){
+          await FirestoreServisi().kullaniciOlustur(id: kullanici.id, email:kullanici.email, kullaniciAdi: kullanici.kullaniciAdi, fotoUrl: kullanici.fotoUrl);
+        }
+      }
     } catch (error) {
+      print("ERROR" + error);
       uyariGoster(hataKodu: error.code);
 
       setState(() {

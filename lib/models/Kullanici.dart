@@ -21,7 +21,8 @@ class Kullanici {
         id: kullanici.uid,
         kullaniciAdi: kullanici.displayName,
         fotoUrl: kullanici.photoURL,
-        email: kullanici.email);
+        email: kullanici.email
+    );
   }
 
   factory Kullanici.documandanUret(DocumentSnapshot doc) {
