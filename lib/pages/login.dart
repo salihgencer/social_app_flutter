@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:social_app/pages/register.dart';
 import 'package:social_app/services/authentication.dart';
 
@@ -140,7 +141,7 @@ class _LoginState extends State<Login> {
   }
 
   void _girisYap() async{
-
+    final _yetkilendirmeServisi = Provider.of<YetkilendirmeServisi>(context,listen: false);
 
     if(_formAnahtari.currentState.validate()){
       _formAnahtari.currentState.save();
@@ -149,12 +150,12 @@ class _LoginState extends State<Login> {
       });
 
       try{
-        await YetkilendirmeServisi().mailIleGiris(email, sifre);
+        await _yetkilendirmeServisi.mailIleGiris(email, sifre);
         //Navigator.of(context).pop();
       }
       catch(error){
 
-
+        uyariGoster(hataKodu: error.code);
 
         setState(() {
           yukleniyor = false;

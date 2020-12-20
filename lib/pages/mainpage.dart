@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:social_app/services/authentication.dart';
 
 class MainPage extends StatefulWidget {
@@ -9,6 +10,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
+    final _yetkilendirmeServisi = Provider.of<YetkilendirmeServisi>(context,listen: false);
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -18,7 +20,7 @@ class _MainPageState extends State<MainPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-                YetkilendirmeServisi().cikisYap();
+                _yetkilendirmeServisi.cikisYap();
               },
               child: Text("Çıkış Yap"),
             ),

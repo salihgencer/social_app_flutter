@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:social_app/services/authentication.dart';
 
 class Register extends StatefulWidget {
@@ -132,6 +133,7 @@ class _RegisterState extends State<Register> {
   }
 
   void _kullaniciOlustur() async{
+    final _yetkilendirmeServisi = Provider.of<YetkilendirmeServisi>(context,listen: false);
     var formState = _formAnahtari.currentState;
     if(formState.validate()){
       formState.save();
@@ -140,7 +142,7 @@ class _RegisterState extends State<Register> {
       });
 
       try{
-        await YetkilendirmeServisi().mailIleKayit(email, sifre);
+        await _yetkilendirmeServisi.mailIleKayit(email, sifre);
         Navigator.pop(context);
       }catch(error){
         setState(() {
