@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:social_app/pages/Login.dart';
-import 'package:social_app/pages/login.dart';
-import 'package:social_app/pages/mainpage.dart';
 import 'package:social_app/redirect.dart';
 import 'package:firebase_core/firebase_core.dart';
 

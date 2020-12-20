@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/pages/register.dart';
+import 'package:social_app/services/authentication.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -7,12 +8,17 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   final _formAnahtari = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool yukleniyor = false;
+  String email, sifre;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           _formElemanlari(),
@@ -59,6 +65,9 @@ class _LoginState extends State<Login> {
 
               return null;
             },
+            onSaved: (girilenDeger){
+              email = girilenDeger;
+            },
           ),
           SizedBox(height: 40,),
           TextFormField(
@@ -76,6 +85,9 @@ class _LoginState extends State<Login> {
               }
 
               return null;
+            },
+            onSaved: (girilenDeger){
+              sifre = girilenDeger;
             },
           ),
           SizedBox(height: 40,),
@@ -127,13 +139,58 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _girisYap(){
-    setState(() {
-      yukleniyor = true;
-    });
+  void _girisYap() async{
+
 
     if(_formAnahtari.currentState.validate()){
-      print("giriş işlemleri başlayabilir.");
+      _formAnahtari.currentState.save();
+      setState(() {
+        yukleniyor = true;
+      });
+
+      try{
+        await YetkilendirmeServisi().mailIleGiris(email, sifre);
+        //Navigator.of(context).pop();
+      }
+      catch(error){
+
+
+
+        setState(() {
+          yukleniyor = false;
+        });
+      }
     }
+  }
+
+  uyariGoster({hataKodu}){
+    /*
+        * **invalid-email**:
+  ///  - Thrown if the email address is not valid.
+  /// - **user-disabled**:
+  ///  - Thrown if the user corresponding to the given email has been disabled.
+  /// - **user-not-found**:
+  ///  - Thrown if there is no user corresponding to the given email.
+  /// - **wrong-password**:
+        * */
+    String message = "";
+
+    if(hataKodu == "user-disabled"){
+      message = "Bu E-mail adresi ile giriş yapamazsınız.";
+    }
+    else if(hataKodu == "invalid-email"){
+      message = "Geçersiz E-mail adresi";
+    }
+    else if(hataKodu == "user-not-found"){
+      message = "Bu mail adresi ile kullanıcı bulunamadı.";
+    }
+    else if(hataKodu == "wrong-password"){
+      message = "Şifre uyuşmuyor, Lütfen tekrar deneyiniz.";
+    }
+    else {
+      message = "Bilinmeyen bir hata";
+    }
+    var snackbar = SnackBar(content: Text(message));
+    _scaffoldKey.currentState.showSnackBar(snackbar);
   }
 }
