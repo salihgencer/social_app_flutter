@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_app/pages/Search.dart';
+import 'package:social_app/pages/announcements.dart';
+import 'package:social_app/pages/flow.dart';
+import 'package:social_app/pages/profile.dart';
+import 'package:social_app/pages/upload.dart';
 import 'package:social_app/services/authentication.dart';
 
 class MainPage extends StatefulWidget {
@@ -8,25 +13,58 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  int _activeBottomPage = 0;
+  PageController pageCommand;
+
+  @override
+  void initState() {
+    super.initState();
+    pageCommand = PageController(initialPage: 4);
+  }
+
+  @override
+  void dispose() {
+    pageCommand.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _yetkilendirmeServisi = Provider.of<YetkilendirmeServisi>(context,listen: false);
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: PageView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: pageCommand,
+        onPageChanged: (changeIndex){
+          setState(() {
+            _activeBottomPage = changeIndex;
+          });
+        },
         children: [
-          Center(child: Text("Anasayfa")),
-          SizedBox(height: 15.0,),
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                _yetkilendirmeServisi.cikisYap();
-              },
-              child: Text("Çıkış Yap"),
-            ),
-          ),
-
+          FlowPage(),
+          SearchPage(),
+          UploadPage(),
+          AnnouncementsPage(),
+          ProfilePage()
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _activeBottomPage,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        items: [
+          BottomNavigationBarItem(label: "Akış", icon: Icon(Icons.bubble_chart)),
+          BottomNavigationBarItem(label: "Arama", icon: Icon(Icons.search)),
+          BottomNavigationBarItem(label: "Yükle", icon: Icon(Icons.upload_file)),
+          BottomNavigationBarItem(label: "Duyurular", icon: Icon(Icons.announcement)),
+          BottomNavigationBarItem(label: "Profil", icon: Icon(Icons.person_rounded)),
+        ],
+        onTap: (secilenSayfa){
+          setState(() {
+            _activeBottomPage = secilenSayfa;
+            pageCommand.jumpToPage(secilenSayfa);
+          });
+        },
       ),
     );
   }
