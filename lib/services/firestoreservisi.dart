@@ -6,6 +6,9 @@ class FirestoreServisi {
   final FirebaseFirestore  _firestore = FirebaseFirestore.instance;
   final DateTime zaman = DateTime.now();
   final String _userCollectionName = "users";
+  final String _userFollowCollectionName = "userFollow";
+  final String _userFollowersCollectionName = "userFollowers";
+  final String _userFollowingCollectionName = "userFollowing";
 
   Future<void> kullaniciOlustur({id,email,kullaniciAdi, fotoUrl=""}) async{
     await _firestore.collection(_userCollectionName).doc(id).set({
@@ -26,4 +29,13 @@ class FirestoreServisi {
     return null;
   }
 
+  Future<int> takipciSayisi(userId) async{
+    var snapshot = await _firestore.collection(_userFollowCollectionName).doc(userId).collection(_userFollowersCollectionName).get();
+    return snapshot.docs.length;
+  }
+
+  Future<int> takipEdilenSayisi(userId) async{
+    var snapshot = await _firestore.collection(_userFollowCollectionName).doc(userId).collection(_userFollowingCollectionName).get();
+    return snapshot.docs.length;
+  }
 }

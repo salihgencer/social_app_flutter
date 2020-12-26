@@ -14,6 +14,33 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  int _gonderiSayisi = 0;
+  int _takipciSayisi = 0;
+  int _takipSayisi = 0;
+
+  _takipciSayisiGetir() async {
+    int takipci = await FirestoreServisi().takipciSayisi(widget.profileId);
+    print(takipci);
+    setState(() {
+      _takipciSayisi = takipci;
+    });
+  }
+
+  _takipEdilenSayisiGetir() async {
+    int takipEdilen = await FirestoreServisi().takipEdilenSayisi(widget.profileId);
+    setState(() {
+      _takipSayisi = takipEdilen;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _takipciSayisiGetir();
+    _takipEdilenSayisiGetir();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +63,9 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, snapshot) {
 
           if(!snapshot.hasData){
-            print("adasdas" + widget.profileId);
             return CircularProgressIndicator();
           }
           else {
-            print("asdasdada");
           }
 
           return ListView(
@@ -54,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _profileDetail(Kullanici profileData) {
+    var userPhoto = profileData.fotoUrl.isNotEmpty ? NetworkImage(profileData.fotoUrl) : AssetImage("assets/images/ghost_user.png");
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -64,14 +90,15 @@ class _ProfilePageState extends State<ProfilePage> {
               CircleAvatar(
                 backgroundColor: Colors.grey,
                 radius: 50.0,
+                backgroundImage: userPhoto,
               ),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _sosyalSayac("Asd 1", 23),
-                    _sosyalSayac("Asd 2", 34),
-                    _sosyalSayac("Asd 3", 45),
+                    _sosyalSayac(title:"Gönderiler", count:_gonderiSayisi),
+                    _sosyalSayac(title:"Takipçi", count:_takipciSayisi),
+                    _sosyalSayac(title:"Takip", count:_takipSayisi),
                   ],
                 ),
               ),
@@ -97,11 +124,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _sosyalSayac(String title, int sayi) {
+  Widget _sosyalSayac({String title, int count}) {
     return Column(
       children: [
         Text(
-          sayi.toString(),
+          count.toString(),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
