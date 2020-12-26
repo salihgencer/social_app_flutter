@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_app/models/Kullanici.dart';
 import 'package:social_app/services/authentication.dart';
+import 'package:social_app/services/firestoreservisi.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String profileId;
+
+  const ProfilePage({Key key, this.profileId}) : super(key: key);
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -25,11 +31,29 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-      body: _profileDetail(),
+      body: FutureBuilder<Object>(
+        future: FirestoreServisi().kullaniciGetir(widget.profileId),
+        builder: (context, snapshot) {
+
+          if(!snapshot.hasData){
+            print("adasdas" + widget.profileId);
+            return CircularProgressIndicator();
+          }
+          else {
+            print("asdasdada");
+          }
+
+          return ListView(
+            children: [
+              _profileDetail(snapshot.data),
+            ],
+          );
+        }
+      ),
     );
   }
 
-  Widget _profileDetail() {
+  Widget _profileDetail(Kullanici profileData) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -48,7 +72,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     _sosyalSayac("Asd 1", 23),
                     _sosyalSayac("Asd 2", 34),
                     _sosyalSayac("Asd 3", 45),
-                    _sosyalSayac("Asd 4", 24),
                   ],
                 ),
               ),
@@ -58,13 +81,13 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 10.0,
           ),
           Text(
-            "Kullanıcı Adı",
+            profileData.kullaniciAdi,
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 5.0,
           ),
-          Text("Hakkında"),
+          Text(profileData.hakkinda),
           SizedBox(
             height: 10.0,
           ),

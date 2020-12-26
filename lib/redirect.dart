@@ -21,6 +21,7 @@ class Redirect extends StatelessWidget {
 
         if(snapshot.hasData){
           Kullanici aktifKullanici = snapshot.data;
+          _yetkilendirmeServisi.aktifKullaniciId = aktifKullanici.id;
           return MainPage();
         }
         else {

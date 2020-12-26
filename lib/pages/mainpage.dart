@@ -31,6 +31,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final _yetkilendirmeServisi = Provider.of<YetkilendirmeServisi>(context,listen: false);
+    print(_yetkilendirmeServisi.aktifKullaniciId);
     return Scaffold(
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
@@ -45,7 +46,7 @@ class _MainPageState extends State<MainPage> {
           SearchPage(),
           UploadPage(),
           AnnouncementsPage(),
-          ProfilePage()
+          ProfilePage(profileId: _yetkilendirmeServisi.aktifKullaniciId,)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
