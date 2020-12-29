@@ -19,7 +19,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    pageCommand = PageController(initialPage: 2);
+    pageCommand = PageController(initialPage: 4);
   }
 
   @override

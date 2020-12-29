@@ -2,8 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:social_app/services/authentication.dart';
+import 'package:social_app/services/firestorageservisi.dart';
+import 'package:social_app/services/firestoreservisi.dart';
 
 class UploadPage extends StatefulWidget {
+
   @override
   _UploadPageState createState() => _UploadPageState();
 }
@@ -146,7 +151,7 @@ class _UploadPageState extends State<UploadPage> {
   }
 
 
-  _gonderiEkle(){
+  _gonderiEkle() async{
 
 
     if(!yukleniyor){
@@ -154,16 +159,27 @@ class _UploadPageState extends State<UploadPage> {
         yukleniyor = true;
       });
 
+      String aktifKullaniciId = Provider.of<YetkilendirmeServisi>(context, listen: false).aktifKullaniciId;
+
       String aciklama = aciklamaController.text;
       String lokasyon = lokasyonController.text;
+      try{
+        String resimUrl = await FirabeseStorageServisi().gonderiResmiYukle(dosya, aktifKullaniciId);
+        String gonderiId = await FirestoreServisi().gonderiEkle(aciklama: aciklama, lokasyon: lokasyon, userId: aktifKullaniciId, resimUrl: resimUrl);
+        if(gonderiId.length > 0) {
+          // sayfayı ana sayfaya gönderebiliriz.
+        }
+      }
+      catch(e){
+        print(e);
+      }
 
-      print(aciklama + " - " + lokasyon);
+      setState(() {
+        yukleniyor = false;
+        dosya = null;
+        aciklamaController.clear();
+        lokasyonController.clear();
+      });
     }
-
-    setState(() {
-      yukleniyor = false;
-    });
-
-
   }
 }

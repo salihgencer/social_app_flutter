@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_app/models/Kullanici.dart';
+import 'package:social_app/models/Post.dart';
 import 'package:social_app/services/authentication.dart';
 import 'package:social_app/services/firestoreservisi.dart';
+import 'package:social_app/widgets/PostCard.dart';
 
 class ProfilePage extends StatefulWidget {
   final String profileId;
@@ -14,10 +16,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   int _gonderiSayisi = 0;
   int _takipciSayisi = 0;
   int _takipSayisi = 0;
+  List<Post> _gonderiler;
+  String gonderiStyle = "liste";
 
   _takipciSayisiGetir() async {
     int takipci = await FirestoreServisi().takipciSayisi(widget.profileId);
@@ -28,9 +31,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _takipEdilenSayisiGetir() async {
-    int takipEdilen = await FirestoreServisi().takipEdilenSayisi(widget.profileId);
+    int takipEdilen =
+        await FirestoreServisi().takipEdilenSayisi(widget.profileId);
     setState(() {
       _takipSayisi = takipEdilen;
+    });
+  }
+
+  _gonderileriGetir() async {
+    List<Post> gonderiler =
+        await FirestoreServisi().gonderileriGetir(widget.profileId);
+    setState(() {
+      _gonderiler = gonderiler;
+      _gonderiSayisi = gonderiler.length;
     });
   }
 
@@ -39,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _takipciSayisiGetir();
     _takipEdilenSayisiGetir();
+    _gonderileriGetir();
   }
 
   @override
@@ -59,27 +73,64 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: FutureBuilder<Object>(
-        future: FirestoreServisi().kullaniciGetir(widget.profileId),
-        builder: (context, snapshot) {
+          future: FirestoreServisi().kullaniciGetir(widget.profileId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return CircularProgressIndicator();
+            } else {}
 
-          if(!snapshot.hasData){
-            return CircularProgressIndicator();
-          }
-          else {
-          }
-
-          return ListView(
-            children: [
-              _profileDetail(snapshot.data),
-            ],
-          );
-        }
-      ),
+            return ListView(
+              children: [
+                _profileDetail(snapshot.data),
+                _gonderileri_goster(snapshot.data),
+              ],
+            );
+          }),
     );
   }
 
+  Widget _gonderileri_goster(Kullanici kullanici) {
+
+    if(gonderiStyle == "liste"){
+      return ListView.builder(
+        primary: false,
+        itemBuilder: (context, index) {
+          return PostCard(userPost: _gonderiler[index], kullanici: kullanici,);
+        },
+        shrinkWrap: true,
+        itemCount: _gonderiler.length,
+      );
+    }
+    else {
+      List<GridTile> fayanslar = [];
+      _gonderiler.forEach((element) {
+        fayanslar.add(GridTile(
+          child: Container(
+            child: Image.network(
+              element.postPhotoUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ));
+      });
+
+      return GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        mainAxisSpacing: 2,
+        crossAxisSpacing: 2,
+        physics: NeverScrollableScrollPhysics(),
+        children: fayanslar,
+      );
+    }
+
+
+  }
+
   Widget _profileDetail(Kullanici profileData) {
-    var userPhoto = profileData.fotoUrl.isNotEmpty ? NetworkImage(profileData.fotoUrl) : AssetImage("assets/images/ghost_user.png");
+    var userPhoto = profileData.fotoUrl.isNotEmpty
+        ? NetworkImage(profileData.fotoUrl)
+        : AssetImage("assets/images/ghost_user.png");
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -96,9 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _sosyalSayac(title:"Gönderiler", count:_gonderiSayisi),
-                    _sosyalSayac(title:"Takipçi", count:_takipciSayisi),
-                    _sosyalSayac(title:"Takip", count:_takipSayisi),
+                    _sosyalSayac(title: "Gönderiler", count: _gonderiSayisi),
+                    _sosyalSayac(title: "Takipçi", count: _takipciSayisi),
+                    _sosyalSayac(title: "Takip", count: _takipSayisi),
                   ],
                 ),
               ),

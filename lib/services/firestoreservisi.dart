@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:social_app/models/Kullanici.dart';
+import 'package:social_app/models/Post.dart';
 
 class FirestoreServisi {
   final FirebaseFirestore  _firestore = FirebaseFirestore.instance;
@@ -35,7 +36,26 @@ class FirestoreServisi {
   }
 
   Future<int> takipEdilenSayisi(userId) async{
-    var snapshot = await _firestore.collection(_userFollowCollectionName).doc(userId).collection(_userFollowingCollectionName).get();
+    QuerySnapshot snapshot = await _firestore.collection(_userFollowCollectionName).doc(userId).collection(_userFollowingCollectionName).get();
     return snapshot.docs.length;
+  }
+  
+  Future<String> gonderiEkle({String aciklama, String lokasyon, String resimUrl, String userId}) async{
+    Map<String, dynamic> postData = {
+      "description": aciklama,
+      "likeCount":0,
+      "location": lokasyon,
+      "photoUrl": resimUrl,
+      "userId": userId,
+      "createdTime": zaman
+    };
+    DocumentReference snapshot = await _firestore.collection("userPosts").doc(userId).collection("user-post").add(postData);
+    return snapshot.id;
+  }
+
+  Future<List<Post>> gonderileriGetir(userId) async{
+    QuerySnapshot snapshot = await _firestore.collection("userPosts").doc(userId).collection("user-post").orderBy("createdTime", descending: true).get();
+    List<Post> userPosts = snapshot.docs.map((doc) => Post.dokumandanUret(doc)).toList();
+    return userPosts;
   }
 }
