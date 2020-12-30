@@ -100,4 +100,17 @@ class FirestoreServisi {
     }
     return false;
   }
+
+  Stream<QuerySnapshot> yorumlariGetir(String postId) {
+    return _firestore.collection("comments").doc(postId).collection("post-comments").orderBy("createdTime", descending: true).snapshots();
+  }
+
+  Future<void> yorumGonder({String yorum, String postId, String userId}) async{
+    print("deneme " + userId);
+     await _firestore.collection("comments").doc(postId).collection("post-comments").add({
+      "comment":yorum,
+      "createdTime": zaman,
+      "userId": userId,
+    });
+  }
 }

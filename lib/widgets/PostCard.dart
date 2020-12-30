@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_app/models/Kullanici.dart';
 import 'package:social_app/models/Post.dart';
+import 'package:social_app/pages/comments.dart';
 import 'package:social_app/services/authentication.dart';
 import 'package:social_app/services/firestoreservisi.dart';
 
@@ -101,6 +102,9 @@ class _PostCardState extends State<PostCard> {
             ),
             IconButton(
               icon: Icon(Icons.message),
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Comments(userPost: widget.userPost,)));
+              },
             ),
           ],
         ),

@@ -77,11 +77,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-      body: FutureBuilder<Object>(
+      body: FutureBuilder<Kullanici>(
           future: FirestoreServisi().kullaniciGetir(widget.profileId),
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data == null) {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
 
             return ListView(
