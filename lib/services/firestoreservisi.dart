@@ -58,4 +58,46 @@ class FirestoreServisi {
     List<Post> userPosts = snapshot.docs.map((doc) => Post.dokumandanUret(doc)).toList();
     return userPosts;
   }
+
+  gonderiBegen(Post userPost, activeUserId, {favType="arttir"}) async{
+    DocumentReference docRef = await _firestore.collection("userPosts").doc(userPost.userId).collection("user-post").doc(userPost.id);
+    DocumentSnapshot snapshot = await docRef.get();
+    int yeniBegeni = 0;
+
+    if(snapshot.exists){
+      Post userp = Post.dokumandanUret(snapshot);
+
+      if(favType == "arttir"){
+        yeniBegeni = userp.likeCount + 1;
+      }
+      else {
+        yeniBegeni = userp.likeCount - 1;
+      }
+
+      await docRef.update({
+        "likeCount": yeniBegeni,
+      });
+      
+      // Kullanıcı gönderiyi beğendi yada beğenmekten vazgeçti buna göre 
+      // kullanıcının bilgisini tutalım
+      if(favType == "arttir"){
+        _firestore.collection("userLikes").doc(userp.id).collection("postLikes").doc(activeUserId).set({});
+      }
+      else {
+        DocumentSnapshot docbegeni = await _firestore.collection("userLikes").doc(userp.id).collection("postLikes").doc(activeUserId).get();
+        if(docbegeni.exists) {
+          _firestore.collection("userLikes").doc(userp.id).collection("postLikes").doc(activeUserId).delete();
+        }
+      }
+    }
+  }
+
+
+  Future<bool> begeniVarmi(Post userPost, activeUserId) async{
+    DocumentSnapshot userLike = await _firestore.collection("userLikes").doc(userPost.id).collection("postLikes").doc(activeUserId).get();
+    if(userLike.exists){
+      return true;
+    }
+    return false;
+  }
 }

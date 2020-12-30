@@ -24,27 +24,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _takipciSayisiGetir() async {
     int takipci = await FirestoreServisi().takipciSayisi(widget.profileId);
-    print(takipci);
-    setState(() {
-      _takipciSayisi = takipci;
-    });
+    if (mounted) {
+      setState(() {
+        _takipciSayisi = takipci;
+      });
+    }
   }
 
   _takipEdilenSayisiGetir() async {
     int takipEdilen =
         await FirestoreServisi().takipEdilenSayisi(widget.profileId);
-    setState(() {
-      _takipSayisi = takipEdilen;
-    });
+    if (mounted) {
+      setState(() {
+        _takipSayisi = takipEdilen;
+      });
+    }
   }
 
   _gonderileriGetir() async {
     List<Post> gonderiler =
         await FirestoreServisi().gonderileriGetir(widget.profileId);
-    setState(() {
-      _gonderiler = gonderiler;
-      _gonderiSayisi = gonderiler.length;
-    });
+    if (mounted) {
+      setState(() {
+        _gonderiler = gonderiler;
+        _gonderiSayisi = gonderiler.length;
+      });
+    }
   }
 
   @override
@@ -75,9 +80,9 @@ class _ProfilePageState extends State<ProfilePage> {
       body: FutureBuilder<Object>(
           future: FirestoreServisi().kullaniciGetir(widget.profileId),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (!snapshot.hasData || snapshot.data == null) {
               return CircularProgressIndicator();
-            } else {}
+            }
 
             return ListView(
               children: [
