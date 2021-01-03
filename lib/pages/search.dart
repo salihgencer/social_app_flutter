@@ -24,6 +24,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _appBar() {
     return AppBar(
+      backgroundColor: Colors.white,
       elevation: 0,
       titleSpacing: 0.0,
       title: TextFormField(
