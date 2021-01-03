@@ -21,6 +21,12 @@ class FirestoreServisi {
     });
   }
 
+  Future<List<Kullanici>> kullanicilariSorgula(String userWord) async{
+    QuerySnapshot snapshot = await _firestore.collection(_userCollectionName).where("userName", isEqualTo: userWord ).get();
+    List<Kullanici> kullanicilar = snapshot.docs.map((kullanici) => Kullanici.documandanUret(kullanici)).toList();
+    return kullanicilar;
+  }
+
   Future<Kullanici> kullaniciGetir(id) async{
     DocumentSnapshot doc = await _firestore.collection(_userCollectionName).doc(id).get();
     if(doc.exists){
@@ -100,8 +106,7 @@ class FirestoreServisi {
       }
     }
   }
-
-
+  
   Future<bool> begeniVarmi(Post userPost, activeUserId) async{
     DocumentSnapshot userLike = await _firestore.collection("userLikes").doc(userPost.id).collection("postLikes").doc(activeUserId).get();
     if(userLike.exists){
