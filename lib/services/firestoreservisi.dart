@@ -30,6 +30,15 @@ class FirestoreServisi {
     return null;
   }
 
+  Future<void> kullaniciGuncelle({id, kullaniciAdi, hakkinda, fotoUrl=""}) async{
+    await _firestore.collection(_userCollectionName).doc(id).update({
+      "about": hakkinda,
+      "photoUrl": fotoUrl,
+      "userName": kullaniciAdi
+    });
+
+  }
+
   Future<int> takipciSayisi(userId) async{
     var snapshot = await _firestore.collection(_userFollowCollectionName).doc(userId).collection(_userFollowersCollectionName).get();
     return snapshot.docs.length;

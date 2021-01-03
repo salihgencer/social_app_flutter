@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_app/models/Kullanici.dart';
 import 'package:social_app/models/Post.dart';
+import 'package:social_app/pages/profile_edit.dart';
 import 'package:social_app/services/authentication.dart';
 import 'package:social_app/services/firestoreservisi.dart';
 import 'package:social_app/widgets/PostCard.dart';
@@ -21,6 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _takipSayisi = 0;
   List<Post> _gonderiler;
   String gonderiStyle = "liste";
+  String _aktifKullaniciId;
 
   _takipciSayisiGetir() async {
     int takipci = await FirestoreServisi().takipciSayisi(widget.profileId);
@@ -58,6 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _takipciSayisiGetir();
     _takipEdilenSayisiGetir();
     _gonderileriGetir();
+    _aktifKullaniciId = Provider.of<YetkilendirmeServisi>(context, listen:false).aktifKullaniciId;
   }
 
   @override
@@ -77,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-      body: FutureBuilder<Kullanici>(
+      body: FutureBuilder<Object>(
           future: FirestoreServisi().kullaniciGetir(widget.profileId),
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data == null) {
@@ -174,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(
             height: 10.0,
           ),
-          _profileEditButton(),
+          widget.profileId == _aktifKullaniciId ? _profileEditButton() : Text("Takip et veya takipten çıkar butonu gelecek"),
         ],
       ),
     );
@@ -207,7 +210,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       width: double.infinity,
       child: OutlineButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileEdit(userId:widget.profileId),));
+        },
         child: Text("Düzenle"),
       ),
     );
